@@ -921,7 +921,7 @@ function newlife()
     
     if Lives < 1 then youaredead=true end
     
-    SFX=audio.play(SFXdie)
+   -- SFX=audio.play(SFXdie)
     ball:applyForce(0,0)
     if Score > highscore then highscore=Score; end
     
@@ -1126,6 +1126,8 @@ function giefpowerup()
                 paddle.x = tempX
                 paddletype = 1
                 physics.addBody(paddle,     "kinematic",    {density = 1.0, friction = 0.1, bounce = 1.001, isSensor = false})
+                paddle:addEventListener("collision", onpaddleCollision)
+
             end 
         
 
@@ -1143,8 +1145,9 @@ function giefpowerup()
                 paddle.life = 1000
                 paddle.xScale = 1
                 paddle.x = tempX
-
                 physics.addBody(paddle,     "kinematic",    {density = 1.0, friction = 0.1, bounce = 1.001, isSensor = false})
+                paddle:addEventListener("collision", onpaddleCollision)
+
             end 
                 tempX = paddle.x
                 if paddletype == 1 then 
@@ -1192,6 +1195,8 @@ function giefpowerup()
                 paddle.x = tempX
 
                 physics.addBody(paddle,     "kinematic",    {density = 1.0, friction = 0.1, bounce = 1.001, isSensor = false})
+                paddle:addEventListener("collision", onpaddleCollision)
+
             end 
                 tempX = paddle.x
                 if paddletype == 1 then 
@@ -1643,7 +1648,7 @@ function onCollision(event)
         timer.performWithDelay(1, resetLinearVelocity)
     end
     
-    SFX = audio.play (SFXding)
+    --SFX = audio.play (SFXding)
     
     
     
@@ -1881,7 +1886,7 @@ function onCollision(event)
                 end) 
                 
                 powerup()
-                SFX = audio.play (SFXboom)
+               -- SFX = audio.play (SFXboom)
                 combo = combo + 1; print ("combo "..combo )
                 enemyRemaining=enemyRemaining -1
                 --print ("enemy "..enemyRemaining)
@@ -1960,6 +1965,7 @@ function onpaddleCollision(e)
     
     if e.other.type == "you" then 
         combo = -1
+        print ("combo reset "..combo )
         forcechange = paddleblend.x - e.other.x
         if forcechange > 8 or forcechange < -8 then 
             timer.performWithDelay(1, function()
@@ -3221,6 +3227,7 @@ function scene:exitScene (event)
     Lives 			= nil
     --Score 			= nil
     movepaddleflag	=	0
+    paddletype = 1
     maxenemy 		= nil
     enemyRemaining	= nil
     wob 			= nil
