@@ -425,7 +425,7 @@ function makeobjects()
     paddle.xScale = 1
 
     paddleblend = display.newImage ("Ballmask.png",0,0)
-    paddleblend:setFillColor(100,0,254)
+    paddleblend:setFillColor(.5,.5,1)
     paddleblend.blendMode="add"
     paddleblend.xScale=4.5
     paddleblend.yScale=1.5
@@ -867,6 +867,7 @@ function newlife()
     leveltext.text="Dead"
     forcefieldflag=1
     wobbleflag=0
+    paddleblend.rotation = 0 
     gravflag=0
     guns=false
     physics.setGravity (0, 9.8)
@@ -978,7 +979,7 @@ function giefpowerup()
     chance = math.random (14)
     if chance == 14 then chance = 13
     end 
-    
+    --chance = 4
     
     if chance==1 then --give points
         Score=Score+2000*multiplier
@@ -1131,7 +1132,7 @@ function giefpowerup()
     if chance == 12 then 
         print (guns)
         if paddletype ~= 2 then 
-            paddletype = 2
+        
                 function bigpaddle()
                 physics.removeBody(paddle)
                 display.remove(paddle)
@@ -1146,6 +1147,13 @@ function giefpowerup()
                 physics.addBody(paddle,     "kinematic",    {density = 1.0, friction = 0.1, bounce = 1.001, isSensor = false})
             end 
                 tempX = paddle.x
+                if paddletype == 1 then 
+                    transition.to(paddle, {time = 9, xScale = 2})
+                end 
+                if paddletype == 0 then 
+                    transition.to(paddle, {time = 9, xScale = 3})
+                end 
+                paddletype = 2
                 timer.performWithDelay(10, bigpaddle, 1)
 
 
@@ -1153,6 +1161,14 @@ function giefpowerup()
             powertext.text = "Biiig!"
         else
                 tempX = paddle.x
+                
+                if paddletype == 0 then 
+                    transition.to(paddle, {time = 9, xScale = .25})
+                end 
+                if paddletype == 1 then 
+                    transition.to(paddle, {time = 9, xScale = .5})
+                end 
+                paddletype = 1
                 timer.performWithDelay(10, normalpaddle, 1)
                 powertext.text = "Normal"
             
@@ -1162,7 +1178,7 @@ function giefpowerup()
         if chance == 13 then 
         print (guns)
         if paddletype ~= 0 then 
-        paddletype = 0
+        
 
                 function smallpaddle()
                 physics.removeBody(paddle)
@@ -1178,6 +1194,14 @@ function giefpowerup()
                 physics.addBody(paddle,     "kinematic",    {density = 1.0, friction = 0.1, bounce = 1.001, isSensor = false})
             end 
                 tempX = paddle.x
+                if paddletype == 1 then 
+                    transition.to(paddle, {time = 9, xScale = .5})
+                end 
+                if paddletype == 2 then 
+                    transition.to(paddle, {time = 9, xScale = .25})
+                end 
+                
+                paddletype = 0
                 timer.performWithDelay(10, smallpaddle, 1)
 
 
@@ -1185,6 +1209,15 @@ function giefpowerup()
             powertext.text = "Tiny!"
         else
                 tempX = paddle.x
+                if paddletype == 1 then 
+                    transition.to(paddle, {time = 9, xScale = 2})
+                end 
+                if paddletype == 2 then 
+                    transition.to(paddle, {time = 9, xScale = 3})
+                end 
+                paddletype = 1 
+
+
                 timer.performWithDelay(10, normalpaddle, 1)
                 powertext.text = "Normal"
 
@@ -1195,7 +1228,7 @@ function giefpowerup()
 
 
     
-    if chance == 13 then 
+    if chance == 16 then 
         if explosive == false then 
             explosive = true 
             powertext.text = "Bada-boom"
@@ -1866,8 +1899,9 @@ function onCollision(event)
     
     if enemyRemaining<1 then
         
-        
-        
+        timer.performWithDelay (1, neeext)
+
+ function neeext()        
         for i = 1, maxenemy do
             if enemypaddle[i].isalive == true then 
                 enemypaddle[i]:removeEventListener("collision", onEnemy)
@@ -1915,7 +1949,7 @@ function onCollision(event)
         end 
         
     end
-    
+    end 
 end
 
 
@@ -2111,6 +2145,7 @@ function wobble()
             wob=0
 	end
 	paddle.rotation = wob
+    paddleblend.rotation = wob
 	paddle:setFillColor(100,200,100)
 	if wobbleflag==0 then 
             if youaredead==false then 
@@ -3006,7 +3041,7 @@ function createenemy()
                     --if enemypaddle[i].special ~= "invisible" then 
                     enemypad[i] = display.newImage("Ballmask.png",0,0)
                     enemypad[i].isalive = true 
-                    enemypad[i]:setFillColor(unpack (EnemyColors[col]))
+                    enemypad[i]:setFillColor(col1,col2,col3)
                     if enemypaddle[i].special ~= "half" then 
                         enemypad[i].xScale=3.1
                     end 
