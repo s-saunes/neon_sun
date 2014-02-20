@@ -1,0 +1,39 @@
+Todo:
+	
+	Gameplay:
+		
+		Powerups:
+			Magnet powerup (catches ball on paddle and keeps it there until release/press)
+			Shrink/grow (resize the paddle)
+			Concave/convex paddle
+			
+			Explosive ball (activates when it hits the paddle. detonates when it hits the first brick)
+
+		Brick types:
+			ON/OFF toggle switch
+			ON/OFF brick 
+			Oscillating gate
+			Keyhole vertical
+			Half size color bricks
+			Gravity brick (pulls the ball)
+			Teleport brick
+			
+	Media:
+
+		Graphics: 
+			Icons for the effects
+			Backgrounds for the levels
+			Paddle graphics
+
+		Sounds:
+			All sound effects
+
+		Music: 
+			All music
+
+	Bugs:
+
+		
+
+	Fonts: 
+		

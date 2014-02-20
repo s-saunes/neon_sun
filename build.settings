@@ -1,0 +1,28 @@
+-- Supported values for orientation:
+-- portrait, portraitUpsideDown, landscapeLeft, landscapeRight
+
+settings = {
+	
+	orientation = {
+		default = "portrait",
+		supported = { "portrait", }
+	},
+	
+	iphone = {
+		plist = {
+			UIStatusBarHidden = false,
+			UIPrerenderedIcon = true, -- set to false for "shine" overlay
+
+			UIAppFonts = 
+			{
+				"Arcade.ttf",
+				"Bronic.ttf",
+				"Strenuous.ttf"
+			},
+		}
+	},
+
+	androidPermissions = {
+		"android.permission.VIBRATE",
+	},
+}
