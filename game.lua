@@ -4,42 +4,18 @@ local group
 --local Particles 	= require("lib_particle_candy")
 local physics 		= require("physics")
 local lev = require ("level")
+local files = require ("files")
 --physics.setDrawMode("hybrid") 
 local _W = display.contentWidth
 local _H = display.contentHeight
 
 -- Loading the highscore from file 
 function loadHighscore() 
-    
-    local path = system.pathForFile( "save.txt", system.DocumentsDirectory )
-    local file = io.open( path, "r" )
-    
-    if file == nil then Highscore = 0; end
-    
-    if file ~=nil then 
-        for line in file:lines() do
-            Highscore=tonumber(line)
-        end
-        io.close( file )
-    end 
-    
-    local path = system.pathForFile( "options.txt", system.DocumentsDirectory )
-    local file = io.open( path, "r" )
-    
-    if file == nil then options=false; end
-    
-    l=0
-    
-    if file~=nil then 
-        options = true 
-        for line in file:lines() do
-            l=l+1
-            optionvalues[l]=tonumber(line)
-           -- print (tonumber(line))
-        end
-        io.close( file )
-    end
-    
+
+Highscore = files.loadscore()
+optionvalues = files.loadoptions()    
+filestats = files.readstats()
+
     if optionvalues[1]==1 then playsounds=true;		end
     if optionvalues[1]==0 then playsounds=false;	end
     if optionvalues[2]==1 then playmusic=true;		end
@@ -50,48 +26,15 @@ function loadHighscore()
 end
 
 
--- loading the statistics from file 
-function readstats()
-    if debugflag then print "readstats";end
-    l=0
-    local path = system.pathForFile( "stats.txt", system.DocumentsDirectory )
-    local file = io.open( path, "r" )
-    if file == nil then 
-        for l=0, 13 do
-            filestats[l]=0
-        end
-        maxline = 14
-        --print (maxline)
-    end
-    if file~=nil then 
-        for line in file:lines() do
-            
-            filestats[l] = tonumber(line)
-            l=l+1
-        end
-        maxline=l	
-        io.close( file )
-    end 
-    
-end
-
--- writing statistics
-function writestats()
-    if debugflag then print "writestats";end
-    
-    l=0
-    local path = system.pathForFile( "stats.txt", system.DocumentsDirectory )
-    fh = io.open( path, "w" )
-    for k,v in pairs( stats ) do 
-        fh:write( v+filestats[l], "\n" )
-        l=l+1
-    end
-    io.close( fh ) 
-    
-end
-
 -- initializing values
 function init()
+    Lives               = 1
+    level               = 1
+
+
+
+
+
     if debugflag then print "init";end
     
     -- Resetting the statistics
@@ -112,7 +55,7 @@ function init()
     stats.invisiball 	= 0
     stats.reverse 		= 0
     
-    readstats()
+   filestats = files.readstats()
     
     -- init lists
     hit                 = false
@@ -153,14 +96,14 @@ function init()
     firsttouch 			= false
     startedPhysics 		= false
     
-    level				= 1
     
     barsvisible			= 1
     youaredead			= false
     noscale				= 0 
     gravflag			= 0
     multiplier 			= 1
-    Lives 				= 5
+    
+    
     Score 				= 0
     bombparticle		=false
     wob 				=0
@@ -187,166 +130,8 @@ function init()
 end
 
 
--- creating objects
 function makeobjects()
-    
-    -- Creating Emitters
- --[[   
-    Particles.CreateEmitter("BG", 240,400, 0, false, true,true)
-    local ParticleProps 				= {}
-    ParticleProps.lifeTime 				= 1000
-    ParticleProps.weight 				= 0.01
-    ParticleProps.directionVariation 	= 360
-    ParticleProps.velocityStart 		= 200
-    ParticleProps.velocityVariation 	= 40
-    ParticleProps.rotationStart 		= 90
-    ParticleProps.rotationVariation 	= 360
-    ParticleProps.rotationChange 		= 30
-    ParticleProps.autoOrientation 		= true
-    ParticleProps.useEmitterRotation 	= true
-    ParticleProps.alphaStart 			= .09
-    ParticleProps.fadeOutDelay 			= 100
-    ParticleProps.scaleStart 			= 5
-    ParticleProps.scaleVariation 		= 1.1
-    ParticleProps.scaleMax 				= 5
-    ParticleProps.scaleOutDelay 		= 10
-    ParticleProps.imagePath 			= "bg.png"
-    ParticleProps.imageWidth 			= 50
-    ParticleProps.imageHeight 			= 50
-    ParticleProps.killOutsideScreen 	= true
-    ParticleProps.emissionShape 		= 2
-    ParticleProps.emissionRadius 		= 200
-    ParticleProps.randomMotionMode		= 1
-    ParticleProps.randomMotionInterval 	= 1
-    ParticleProps.randomMotionAmount 	= 1
-    ParticleProps.blendMode				= "add"
-    ParticleProps.colorChange 			= {0,0,0}
-    
-    local name = "lulz"
-    Particles.CreateParticleType (name, ParticleProps)
-    Particles.AttachParticleType("BG",name, 1, 10, 0)
-    ParticleProps=nil
-    
-    Particles.CreateEmitter("E1", 200,100, 0, false, true,true)
-    local ParticleProps 				= {}
-    ParticleProps.lifeTime 				= 800
-    ParticleProps.weight 				= 0.85
-    ParticleProps.directionVariation 	= 360
-    ParticleProps.velocityStart 		= 252
-    ParticleProps.velocityVariation 	= 111
-    ParticleProps.autoOrientation 		= true
-    ParticleProps.useEmitterRotation 	= true
-    ParticleProps.alphaStart 			= 0.6
-    ParticleProps.alphaVariation 		= 0.5
-    ParticleProps.fadeOutSpeed 			= -1.8
-    ParticleProps.fadeOutDelay 			= 100
-    ParticleProps.scaleStart 			= 1
-    ParticleProps.scaleVariation 		= 2
-    ParticleProps.scaleMax 				= 1.8
-    ParticleProps.scaleOutDelay 		= 10
-    ParticleProps.scaleOutSpeed 		= -1
-    ParticleProps.imagePath 			= "particle.jpg"
-    ParticleProps.imageWidth 			= 3
-    ParticleProps.imageHeight 			= 3
-    ParticleProps.killOutsideScreen 	= true
-    ParticleProps.emissionRadius 		= 1
-    ParticleProps.randomMotionInterval 	= 1
-    ParticleProps.randomMotionAmount 	= 1
-    ParticleProps.colorStart 			= {255,255,255}
-    ParticleProps.colorChange 			= {0,-200,-200}
-    
-    local name = "lol"
-    Particles.CreateParticleType (name, ParticleProps)
-    Particles.AttachParticleType("E1",name, 8, 1, 0)
-    ParticleProps=nil
-    
-    Particles.CreateEmitter("E2", 200,100, 0, false, true,true)
-    local ParticleProps 				= {}
-    ParticleProps.lifeTime 				= 800
-    ParticleProps.weight 				= -0.105
-    ParticleProps.autoOrientation 		= true
-    ParticleProps.useEmitterRotation 	= true
-    ParticleProps.alphaStart 			= .5
-    ParticleProps.alphaVariation 		= 0.3
-    ParticleProps.fadeInSpeed 			= 0
-    ParticleProps.fadeOutSpeed 			= -1.3
-    ParticleProps.fadeOutDelay 			= 0
-    ParticleProps.scaleStart 			= 2
-    ParticleProps.scaleVariation		= 2
-    ParticleProps.scaleMax 				= 2
-    ParticleProps.imagePath 			= "particle.jpg"
-    ParticleProps.imageWidth 			= 3
-    ParticleProps.imageHeight 			= 3
-    ParticleProps.killOutsideScreen 	= true
-    ParticleProps.emissionShape 		= 1
-    ParticleProps.emissionRadius 		= RelX*47
-    ParticleProps.randomMotionMode 		= 0
-    ParticleProps.randomMotionInterval 	= 1
-    ParticleProps.randomMotionAmount 	= 1
-    ParticleProps.colorStart 			= {255,0,255}
-    
-    local name = "lal"
-    Particles.CreateParticleType (name, ParticleProps)
-    Particles.AttachParticleType("E2",name, 2, 1, 0)
-    ParticleProps=nil
-    
-    Particles.CreateEmitter("BOMB", 200,100, 0, false, true,true)
-    Particles.CreateEmitter("BOMB2", 200,100, 0, false, true,true)
-    
-    local ParticleProps 				= {}
-    ParticleProps.lifeTime 				= 1300
-    ParticleProps.weight 				= -0.115
-    ParticleProps.velocityStart 		= 700
-    ParticleProps.autoOrientation 		= true
-    ParticleProps.useEmitterRotation 	= true
-    ParticleProps.alphaStart 			= 1
-    ParticleProps.fadeOutSpeed 			= -.2
-    ParticleProps.scaleStart 			= 2
-    ParticleProps.scaleVariation 		= 2
-    ParticleProps.scaleMax 				= 2
-    ParticleProps.imagePath 			= "bullet.png"
-    ParticleProps.imageWidth 			= 16
-    ParticleProps.imageHeight 			= 16
-    ParticleProps.killOutsideScreen 	= true
-    ParticleProps.emissionShape 		= 0
-    ParticleProps.emissionRadius 		= 15
-    ParticleProps.randomMotionInterval 	= 1
-    ParticleProps.randomMotionAmount 	= 6
-    ParticleProps.colorStart 			= {255,255,255}
-    ParticleProps.PhysicsMaterial 		= {density = 1.0, friction = 0.3, bounce = 0.2 }
-    ParticleProps.PhysicsProperties 	= { isFixedRotation = false, isSleepingAllowed = true, name = "bullet"}
-    ParticleProps.colorChange 			= {0,-100,-100}
-    ParticleProps.blendMode				= "add"
-    
-    local name = "lil"
-    
-    Particles.CreateParticleType (name, ParticleProps)
-    Particles.AttachParticleType("BOMB",name, 1, 1, 300)
-    Particles.AttachParticleType("BOMB2",name, 1, 1, 300)
-    bullet = Particles.GetEmitter("BOMB")
-    ParticleProps=nil
-    
-    Particles.StartAutoUpdate()
-    
-    -- preloading images for the physics engine
-    
-    partbg 			= display.newImageRect ("bg.png",0,0)
-    partbg.alpha = 0 
-    
-    partpt 			= display.newImageRect ("particle.jpg",0,0)
-    partpt.IsVisible=false
-   ]] 
-   
     a=0
-    
-    -- Making gradients
-    
-    grad1 			= graphics.newGradient({0,0,0}, 	{100,30,30}, 	"down")
-    grad2t			= graphics.newGradient({0,130,0}, 	{0,255,0}, 		"down")
-    grad2 			= graphics.newGradient({0,0,0}, 	{120,120,120}, 	"up")
-    grad3 			= graphics.newGradient({60,80,80}, 	{255,255,255}, 	"left")
-    grad4			= graphics.newGradient({60,80,80}, 	{255,255,255}, 	"right")
-    grad5			= graphics.newGradient({100,30,30}, {255,30,30}, 	"down")
     
     tmp 			= ""
     
@@ -361,111 +146,92 @@ function makeobjects()
     -- setting background
     
     background = display.newRect(0,0,_W,_H)
-    background:setFillColor (1,0,0)
-    background.x, background.y = _W*.5, _H*.5
-    -- setting boundries
-    
+        background:setFillColor (1,0,0)
+        background.x, background.y = _W*.5, _H*.5
     leftwall = display.newRect(0,0,5,_H)
-    leftwall.x = 0
-    leftwall.y = _H*.5
-    leftwall:setFillColor(grad5)
-    leftwall.alpha=1
-    
+        leftwall.x = 0
+        leftwall.y = _H*.5
+        leftwall:setFillColor(1,1,1)
+        leftwall.alpha=1
     leftbounds = display.newRect(0,0,50,_H)
-    leftbounds:setFillColor(0,0,0)
-    leftbounds.anchorX = 1
-    leftbounds.anchorY = .5
-    
-    leftbounds.x = -1
-    leftbounds.y = _H*.5
-
+        leftbounds:setFillColor(0,0,0)
+        leftbounds.anchorX = 1
+        leftbounds.anchorY = .5
+        leftbounds.x = -1
+        leftbounds.y = _H*.5
     rightwall = display.newRect(0,0,5,_H)
-    rightwall.x = _W*1
-    rightwall.y = _H*.5
-  
-    rightwall:setFillColor(grad5)
-    rightwall.alpha = 1
-
+        rightwall.x = _W*1
+        rightwall.y = _H*.5
+        rightwall:setFillColor(1,1,1)
+        rightwall.alpha = 1
     rightbounds = display.newRect(0,0,50,_H)
-    rightbounds:setFillColor(0,0,0)
-    rightbounds.anchorX = 0
-    rightbounds.anchorY = .5
-    
-    rightbounds.x = _W+1
-    rightbounds.y = _H*.5
-
-
+        rightbounds:setFillColor(0,0,0)
+        rightbounds.anchorX = 0
+        rightbounds.anchorY = .5
+        rightbounds.x = _W+1
+        rightbounds.y = _H*.5
     topwall = display.newRect(0,0,_W,5)
-    topwall.x = _W/2
-    topwall:setFillColor(grad5)
-    topwall.alpha=1
-    
-    
+        topwall.x = _W/2
+        topwall:setFillColor(1,1,1)
+        topwall.alpha=1
     bottomwall = display.newRect(0,0,_W,5)
         bottomwall.x = _W/2
         bottomwall.y = _H
-    bottomwall:setFillColor(grad5)
-    bottomwall.type="die"
-    bottomwall.alpha=1
+        bottomwall:setFillColor(1,1,1)
+        bottomwall.type="die"
+        bottomwall.alpha=1
     bottombounds = display.newRect(0,0,_W,50)
-    bottombounds:setFillColor(0,0,0)
-    bottombounds.anchorX = .5
-    bottombounds.anchorY = 0
-    
-    bottombounds.x = _W/2
-    bottombounds.y = _H+1
-
-
-    -- making paddle and ball + blendmasks
+        bottombounds:setFillColor(0,0,0)
+        bottombounds.anchorX = .5
+        bottombounds.anchorY = 0
+        bottombounds.x = _W/2
+        bottombounds.y = _H+1
     
     paddle = display.newImage ("paddle.png",RelX*38,RelY*85)
-    paddle:setFillColor(255,255,255)
-    paddle.type="paddle"
-    paddle.alpha = 1
-    paddle.life = 1000
-    paddle.xScale = 1
+        paddle:setFillColor(255,255,255)
+        paddle.type="paddle"
+        paddle.alpha = 1
+        paddle.life = 1000
+        paddle.xScale = 1
 
     paddleblend = display.newImage ("Ballmask.png",0,0)
-    paddleblend:setFillColor(.5,.5,1)
-    paddleblend.blendMode="add"
-    paddleblend.xScale=4.5
-    paddleblend.yScale=1.5
-    paddleblend.alpha = .5
+        paddleblend:setFillColor(.5,.5,1)
+        paddleblend.blendMode="add"
+        paddleblend.xScale=4.5
+        paddleblend.yScale=1.5
+        paddleblend.alpha = .5
     
     ball = display.newCircle( 0, 0, 15 )
-    ball:setFillColor(160,160,255)
-    ball:setStrokeColor(100,100,255)
-    ball.strokeWidth=3
-    ball.type = "you"
-    ball.x, ball.y = display.contentWidth / 2, RelY*15
-    physics.addBody(ball, "dynamic", {density = .6, friction = 0, bounce = 1, isSensor = false, radius = 15})
-    ball.type = "you"
-    ball.isBullet = true
-    ball:setLinearVelocity(math.random (200)-10, -1000)
-    ball.alpha=0
+        ball:setFillColor(160,160,255)
+        ball:setStrokeColor(100,100,255)
+        ball.strokeWidth=3
+        ball.type = "you"
+        ball.x, ball.y = display.contentWidth / 2, RelY*15
+        ball.type = "you"
+        physics.addBody(ball, "dynamic", {density = .6, friction = 0, bounce = 1, isSensor = false, radius = 15})
+        ball.isBullet = true
+        ball:setLinearVelocity(math.random (200)-10, -1000)
+        ball.alpha=0
     
     Ballimg = display.newImage("Ball.png", 0, 0)
-    Ballimg.xScale=1.7
-    Ballimg.yScale=1.7
-    --Ballimg.blendMode=""
-    Ballimg.alpha = 1 
+        Ballimg.xScale=1.7
+        Ballimg.yScale=1.7
+        Ballimg.alpha = 1 
     
     Ballimgblend = display.newImage("Ballmask.png", 0, 0)
-    Ballimgblend.xScale=1.8
-    Ballimgblend.yScale=1.8
-    Ballimgblend.alpha=.2
-    Ballimgblend.blendMode="add"
+        Ballimgblend.xScale=1.8
+        Ballimgblend.yScale=1.8
+        Ballimgblend.alpha=.2
+        Ballimgblend.blendMode="add"
     
     followline = display.newGroup()
     followlineB = display.newImage("Ballmask.png",0,-100)
-    followlineB:setFillColor(250,250,250)
-    followlineB.blendMode="add"
-    followlineB.xScale=0.8
-    followlineB.yScale=2.5
-    followline:insert(followlineB)
-    followline.alpha=0
-    
-    -- making physics bodies
+        followlineB:setFillColor(250,250,250)
+        followlineB.blendMode="add"
+        followlineB.xScale=0.8
+        followlineB.yScale=2.5
+        followline:insert(followlineB)
+        followline.alpha=0
     
     physics.addBody(topwall, 	"static", 		{density = 1.0, friction = 0.1, bounce = 0.08, 	isSensor = false})
     physics.addBody(bottomwall, "static", 		{density = 1.0, friction = 0.5, bounce = .98, 	isSensor = false})
@@ -473,56 +239,37 @@ function makeobjects()
     physics.addBody(rightwall, "static", 		{density = 1.0, friction = 0.5, bounce = .08, 	isSensor = false})
     physics.addBody(paddle, 	"kinematic", 	{density = 1.0, friction = 0.1, bounce = 1.001, isSensor = false})
     
-    -- initializing text 
-    
     scoretext = display.newText ( tmp, 0,0, fontname2, fontsize.Top)
-    scoretext.x = _W*.5
-    scoretext.y = _H*.5
-    
-   -- scoretext:setReferencePoint (display.CenterReferencePoint)
-    scoretext:setFillColor ( 255,255,255 )
-    scoretext.blendMode="add"
+        scoretext.x = _W*.5
+        scoretext.y = _H*.5
+        scoretext:setFillColor ( 255,255,255 )
+        scoretext.blendMode="add"
     
     highscoretext = display.newText ( tmp, RelX*69,RelY*22,fontname2, fontsize.Top)
-    highscoretext:setFillColor ( 255,255,255)
-    highscoretext.blendMode="add"
+        highscoretext:setFillColor ( 255,255,255)
+        highscoretext.blendMode="add"
     
     powertext = display.newText (tmp, 0,0,fontname,30)
     pointtext = display.newText (tmp, 0,0,fontname,30)
     lifetext = display.newText ( tmp, RelX*15, RelY*95, fontname2, fontsize.Bottom )
-    lifetext.blendMode="add"
-    
+        lifetext.blendMode="add"
     leveltext = display.newText( tmp, RelX*50,RelY*50, fontname, 30)
-    leveltext.blendMode="add"
-    
+        leveltext.blendMode="add"
     modtext = display.newText (tmp, RelX*100, RelY*2,fontname2,fontsize.Bottom)
-    modtext.blendMode="add"
-    
-
+        modtext.blendMode="add"
     multitext= display.newText (tmp, RelX*45,RelY*1, fontname2, 40)
-    multitext.anchorX = .5
-    multitext.anchorY = 0
-
-
-    multitext.x = _W*.5
-
-    multitext.y = _H*.01
-
-    multitext.blendMode="add"
-    --multitext:setReferencePoint(display.BottomCenterReferencePoint)
-    
+        multitext.anchorX = .5
+        multitext.anchorY = 0
+        multitext.x = _W*.5
+        multitext.y = _H*.01
+        multitext.blendMode="add"
     
     group:insert(background)
-    --group:insert(Particles.GetEmitter("BG"))
     group:insert(followline)	
     group:insert(bottomwall)
-  --  group:insert(bottomwallB)
     group:insert(leftwall)
-   -- group:insert(leftwallB)
     group:insert(rightwall)
-   -- group:insert(rightwallB)
     group:insert(topwall)
-   -- group:insert(topwallB)
     group:insert(paddle)
     group:insert(paddleblend)
     group:insert(scoretext)
@@ -929,18 +676,12 @@ function newlife()
     if youaredead then 
         stats.gameover = stats.gameover+1
         stats.score = Score/2
-        writestats()
-        
-        local saveData = highscore
-        local path = system.pathForFile( "save.txt", system.DocumentsDirectory )
-        local file = io.open( path, "w" )
-        
-        file:write( saveData )
-        io.close( file )
-        file = nil		
-        
+        files.writestats(filestats)
+        files.savescore(highscore)
+
         level=1
         score=0
+        
         printscore()
         
         Lives=5.5
@@ -1128,6 +869,7 @@ function giefpowerup()
                 paddletype = 1
                 physics.addBody(paddle,     "kinematic",    {density = 1.0, friction = 0.1, bounce = 1.001, isSensor = false})
                 paddle:addEventListener("collision", onpaddleCollision)
+                group:insert(paddle)
 
             end 
         
@@ -1148,6 +890,7 @@ function giefpowerup()
                 paddle.x = tempX
                 physics.addBody(paddle,     "kinematic",    {density = 1.0, friction = 0.1, bounce = 1.001, isSensor = false})
                 paddle:addEventListener("collision", onpaddleCollision)
+                group:insert(paddle)
 
             end 
                 tempX = paddle.x
@@ -1194,10 +937,9 @@ function giefpowerup()
                 paddle.life = 1000
                 paddle.xScale = 1
                 paddle.x = tempX
-
                 physics.addBody(paddle,     "kinematic",    {density = 1.0, friction = 0.1, bounce = 1.001, isSensor = false})
                 paddle:addEventListener("collision", onpaddleCollision)
-
+                group:insert(paddle)
             end 
                 tempX = paddle.x
                 if paddletype == 1 then 
