@@ -8,7 +8,6 @@ local files = require ("files")
 --physics.setDrawMode("hybrid") 
 local _W = display.contentWidth
 local _H = display.contentHeight
-
 -- Loading the highscore from file 
 function loadHighscore() 
 
@@ -29,9 +28,11 @@ end
 -- initializing values
 function init()
     Lives               = 5
-    level               = 1
-
-
+   -- level               = 1
+   level = tonumber(params.level)
+    for k,v in pairs(params) do
+        print(k,v)
+    end
 
 
 
@@ -1019,7 +1020,7 @@ end
 function PosEnemy(lvl)
 
     local info = lev.get(lvl)
-    print "YO!"
+    print ("YO! "..lvl)
     for k,v in pairs(info) do
         print(k,v)
     end
@@ -2754,6 +2755,7 @@ end
 function scene:createScene(event)
     if debugflag then print "createScene";end
     group = self.view
+    params = event.params
 end
 
 function scene:enterScene(event)

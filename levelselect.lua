@@ -48,33 +48,40 @@ function scene:createScene(e)
 	
 		function m.findLevels()
 			local levelList 	= {}
-			local lfs = require "lfs"
+			--local lfs = require "lfs"
 			num = 0
 			success = true 
-			local success = lfs.chdir( doc_path ) -- returns true on success
-			local new_folder_path
+			--local success = lfs.chdir( doc_path ) -- returns true on success
+			--local new_folder_path
 
-			if success then
-	    		print "lolsucess"
+			--if success then
+	    	--	print "lolsucess"
 	    		--lfs.mkdir( "levels" )
-	    		new_folder_path = lfs.currentdir() .. "/levels"
-			end
+	    	--	new_folder_path = lfs.currentdir() .. "/levels"
+			--end
 
-			for file in lfs.dir(new_folder_path) do
-	    		if file ~= "." then
-	        		if file ~= ".." then 
-	            		if file ~= ".DS_Store" then 
-	                		if file ~= "bg.png" then  
-	                    		num = num + 1
-	                    		levelList[num] = file
-	                    		print( "Found file: " .. file )
-	                		end
-	            		end
-	        		end
-	    		end
+			--for file in lfs.dir(new_folder_path) do
+	    	--	if file ~= "." then
+	        --		if file ~= ".." then 
+	        --    		if file ~= ".DS_Store" then 
+	        --        		if file ~= "bg.png" then  
+	        --            		num = num + 1
+	        --            		levelList[num] = file
+	        --            		print( "Found file: " .. file )
+	        --        		end
+	        --    		end
+	        --		end
+	    	--	end
+	    	--end 
+	    	maxcreatedlevels = 14
+	    	for i = 1,maxcreatedlevels do 
+	    		levelList[i] = i
 	    	end 
 
     		listoflevelsplayed = {}
+    		for k,v in pairs(levelList) do
+    			print("LL "..k,v)
+    		end
     		return levelList
     		
 		end 
@@ -108,7 +115,7 @@ function scene:createScene(e)
 			pageScroller = nil 
 		end )
 		
-		storyboard.gotoScene("controller",{params = params})
+		storyboard.gotoScene("game",{params = params})
 	end 
 
 	function playgame(level)
@@ -160,16 +167,16 @@ function scene:createScene(e)
 			leveltext = display.newText (dialogGroup,currentlevel.name,0,0,"Strenuous",50)
 				leveltext.x = _W*.5
 				leveltext.y = _H*.25
-			leveltext2 = display.newText (dialogGroup,"penis",0,0,"Bronic",30)
+			leveltext2 = display.newText (dialogGroup,"",0,0,"Bronic",30)
 				leveltext2.x = _W*.5
 				leveltext2.y = _H*.30
 			leveltext3 = display.newText (dialogGroup,"High Score : "..currentlevel.points,0,0,"Bronic",40)
 				leveltext3.x = _W*.5
 				leveltext3.y = _H*.40
-			leveltext4 = display.newText (dialogGroup,"Min Steps : "..currentlevel.steps,0,0,"Bronic",40)
+			leveltext4 = display.newText (dialogGroup,"",0,0,"Bronic",40)
 				leveltext4.x = _W*.5
 				leveltext4.y = _H*.45
-			leveltext5 = display.newText (dialogGroup,"Min Color : "..currentlevel.colors,0,0,"Bronic",40)
+			leveltext5 = display.newText (dialogGroup,"",0,0,"Bronic",40)
 				leveltext5.x = _W*.5
 				leveltext5.y = _H*.50
 			
@@ -240,7 +247,7 @@ function scene:createScene(e)
 		end 
 
 		if not lististrue then 
-			currentlevel.name 	= "name"
+			currentlevel.name 	= "Get Ready"
 			currentlevel.type 	= "type"
 			currentlevel.hard 	= "diff"
 			currentlevel.points = 0
