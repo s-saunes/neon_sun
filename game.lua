@@ -28,7 +28,7 @@ end
 
 -- initializing values
 function init()
-    Lives               = 1
+    Lives               = 5
     level               = 1
 
 

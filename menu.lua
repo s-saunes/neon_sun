@@ -87,7 +87,7 @@ function menuset(e)
 		menubox:removeEventListener("touch", menuset)
 		menuboxtwo:removeEventListener("touch", menuset2)
 		--menuboxthree:removeEventListener("touch", menuset3)
-		nextscene="game"
+		nextscene="levelselect"
 		transition.to(group,{time=500, alpha=0, onComplete=nextboard})
 	
 	end
