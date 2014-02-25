@@ -302,7 +302,7 @@ local function redolevel()
                     enemypaddle[i].x=RandX[i]
                     enemypaddle[i].y=RandY[i]
                      if enemypaddle[i].special ~= "invisible" then 
-                        enemypaddle[i].rotation = math.random(20)-10
+                        enemypaddle[i].rotation = math.random(10)-5
                         rotation[i] = enemypaddle[i].rotation 
                     end 
 
@@ -475,12 +475,30 @@ function endscene()
     storyboard.gotoScene("menu")
 end
 
+function endscene2()
+    if debugflag then print "endscene";end
+    if LB then 
+    LB:removeSelf()
+    PB:removeSelf()
+    LB=nil
+    PB=nil
+    barsvisible=0
+    end 
+    display.remove(paddle)
+    storyboard.gotoScene("levelselect")
+end
+
 function returntomenu(e)
     if debugflag then print "returntomenu";end
     timer.performWithDelay(100,physics.pause())
     transition.to(group,{time=1000,alpha=0, onComplete=endscene})
 end
 
+function returntoLS(e)
+    if debugflag then print "returntomenu";end
+    timer.performWithDelay(100,physics.pause())
+    transition.to(group,{time=1000,alpha=0, onComplete=endscene2})
+end
 
 function CreateMod()
     if paddle.key == 1 then 
@@ -1535,7 +1553,7 @@ function onCollision(event)
         if bossisdead==true then 
             enemyRemaining=maxenemy
             print ("1244")
-            level=level+1
+            --level=level+1
             
             killpowerup()
             
@@ -1548,9 +1566,9 @@ function onCollision(event)
             --resetenemy()
             setCountersToZero()
             timer.performWithDelay(1,function()
-                createenemy()
+               -- createenemy()
                 resetballflag=1
-                resetball()
+                --resetball()
                 physics.pause()
                 if freeze == 0 then 
                   --  Particles.Freeze()
@@ -1559,7 +1577,9 @@ function onCollision(event)
                 --pause = 1
                 movepaddleflag=1
                -- print "setting newlevelflag to 1"
-                newlevelflag = 1
+                --newlevelflag = 1
+                returntoLS()
+
             end)
         end 
         
@@ -2718,7 +2738,7 @@ function createenemy()
                 enemypaddle[i].y=RandY[i]
                 
                 if enemypaddle[i].special ~= "invisible" then 
-                    enemypaddle[i].rotation = math.random(20)-10
+                    enemypaddle[i].rotation = math.random(10)-5
                     rotation[i] = enemypaddle[i].rotation 
                     
                 end 

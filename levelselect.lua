@@ -3,7 +3,9 @@ local tenflib 		= require "tenfLib"
 --local pageScroller  = require "pageScroller"
 storyboard.purgeOnSceneChange = true
 local scene 		= storyboard.newScene()
-local _W 			= display.contentWidth
+function scene:createScene(e)
+	local last = storyboard.getPrevious()
+	local _W 			= display.contentWidth
 local _H 			= display.contentHeight
 local m 			= {}
 local num 
@@ -26,8 +28,7 @@ local leveltext3
 local dialogueobj
 local dialogButton1
 local dialogButton2
-function scene:createScene(e)
-	local last = storyboard.getPrevious()
+
 	
 
 
@@ -231,7 +232,7 @@ function scene:createScene(e)
 				if list[i].name == level then 
 					
 
-					currentlevel.name 	= gameboard.Name
+					currentlevel.name 	= gameboard.name
 					currentlevel.type 	= gameboard.Type
 					currentlevel.hard 	= gameboard.MarkerColorMaxSegments
 					currentlevel.points = list[i].points
@@ -389,7 +390,7 @@ function scene:enterScene(e)
 end 
 
 function scene:exitScene(e)
-
+menucreated = false
 
 print "exiting scene, bitch"
 

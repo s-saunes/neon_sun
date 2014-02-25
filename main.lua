@@ -1,7 +1,7 @@
 display.setStatusBar(display.HiddenStatusBar)
 local storyboard = require "storyboard"
 
-function printt()
+function print()
 end
 
 --storyboard.gotoScene("intro")
